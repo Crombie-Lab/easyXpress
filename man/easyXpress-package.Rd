@@ -6,12 +6,19 @@
 \alias{easyXpress-package}
 \title{easyXpress: A Package to Read, Process, and Analyze Worm Data Generated from CellProfiler’s WormToolbox}
 \description{
-\if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
 A workflow for the reading, processing, and visualization of nematode morphology data extracted from images using CellProfiler's WormToolbox. Includes a powerful suite of functions to process large high-throughput image based datasets.
 }
 \details{
 For a quick introduction to \pkg{easyXpress} see the vignette: \href{../doc/easyXpress.html}{A walk-through of easyXpress}.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{http://andersenlab.org/easyXpress/}
+}
+
 }
 \author{
 \strong{Maintainer}: Tim Crombie \email{tim.crombie@gmail.com} (\href{https://orcid.org/0000-0002-5645-4154}{ORCID})

@@ -10,7 +10,6 @@
 #'
 "gbm2x"
 
-
 #' Generalized model for one worm object
 #'
 #' This data frame contains the generalized model selection dataframe

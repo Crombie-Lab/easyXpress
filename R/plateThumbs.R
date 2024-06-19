@@ -9,8 +9,10 @@
 #' @param plates a vector with plate numbers to make thumbs for. This vector is
 #'   used to match plate patterns in the filelist.\cr \code{"all"} will make
 #'   thumbs for all plates.\cr \code{13:72} will make thumbs for wells plates
-#'   p13 - p72.\cr \code{c(1, 3, 106)} will make thumbs for plates p01, p03, and
+#'   p013 - p072.\cr \code{c(1, 3, 106)} will make thumbs for plates p001, p003, and
 #'   p106.
+#' @param file_ext the file extension of your raw images. The default is \code{".TIF"},
+#'    this argument is case sensitive. This means .tif files will not be found by default.
 #' @return A folder named raw_plate_thumbs under the project directory
 #'   containing individual .png files for each plate.
 #' @importFrom imager load.image resize save.image
@@ -19,7 +21,7 @@
 #' @export
 #'
 
-plateThumbs <- function(project_dir, plates = "all") {
+plateThumbs <- function(project_dir, plates = "all", file_ext = ".TIF") {
   #make a dataframe from thumbnail files
   file_list <- list.files(glue::glue("{project_dir}/raw_image_thumbs"), full.names = T)
 
@@ -50,8 +52,8 @@ plateThumbs <- function(project_dir, plates = "all") {
 
     # make file df and add layout
     file_df <- tibble::tibble(name = filtered_file_list) %>%
-      dplyr::mutate(plate = stringr::str_extract(name, pattern = "-p[:digit:]+-"),
-                    plate = stringr::str_replace_all(plate, pattern = "-", replacement = ""),
+      dplyr::mutate(plate = stringr::str_extract(name, pattern = "-p[:digit:]+-|_p[:digit:]+_"),
+                    plate = stringr::str_replace_all(plate, pattern = "-|_", replacement = ""),
                     well = stringr::str_extract(name, pattern = "[A-Z][0-9][0-9]_thumbnail.png"),
                     well = stringr::str_replace(well, pattern = "_thumbnail.png", replacement = "")) %>%
       dplyr::group_by(plate) %>%

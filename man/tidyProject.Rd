@@ -4,26 +4,40 @@
 \alias{tidyProject}
 \title{tidyProject}
 \usage{
-tidyProject(project_dir, rm_other = FALSE, plates = "all", max_dim = 512)
+tidyProject(
+  project_dir,
+  rm_other = FALSE,
+  plates = "all",
+  max_dim = 512,
+  file_ext = ".TIF",
+  profile = "moldev"
+)
 }
 \arguments{
 \item{project_dir}{the full path to the project directory. This folder should
-contain .TIF images exported from the imaging platform.}
+contain images exported from the imaging platform.}
 
-\item{rm_other}{logical, remove non-TIF files and folders after the .TIF
-files are moved to raw_images subfolder? Default is \code{FALSE}. Set to
-\code{TRUE} if you are certain you want to remove non-TIF files and folders
-in the \code{project_dir} after .TIFs are moved.}
+\item{rm_other}{logical, remove unwanted files and folders after the image
+files are moved to the raw_images subfolder? Default is \code{FALSE}. Set to
+\code{TRUE} if you are certain you want to remove unwanted files and folders
+in the \code{project_dir} after the desired images are moved.}
 
 \item{plates}{a vector with plate numbers to make thumbs for. This vector is
 used to match plate patterns in the filelist.\cr \code{"all"} will make
 thumbs for all plates.\cr \code{13:72} will make thumbs for wells plates
-p13 - p72.\cr \code{c(1, 3, 106)} will make thumbs for plates p01, p03, and
+p013 - p072.\cr \code{c(1, 3, 106)} will make thumbs for plates p001, p003, and
 p106.}
 
 \item{max_dim}{The maximum dimension of the resized images in pixels. The
 default value is 512, which scales a 2048 pixel image to 6.25 percent of
 its original resolution.}
+
+\item{file_ext}{the file extension of your raw images. The default is \code{".TIF"},
+this argument is case sensitive. This means .tif files will not be found by default.}
+
+\item{profile}{the profile is matched to the imager. Currently there are two
+supported imagers, "moldev" for the Molecular Devices ImageXpress Nano microscope and
+"keyence" for the Keyence BZ-X800 microscope. The default is \code{"moldev"}.}
 }
 \value{
 Folders named raw_images, raw_image_thumbs, and raw_plate_thumbs are
@@ -32,6 +46,6 @@ Folders named raw_images, raw_image_thumbs, and raw_plate_thumbs are
   \href{https://github.com/AndersenLab/CellProfiler}{AndersenLab/CellProfiler}.
 }
 \description{
-Tidies up .TIF files exported from imaging platform and makes thumbnails of
+Tidies up image files exported from imaging platform and makes thumbnails of
 wells and plates.
 }

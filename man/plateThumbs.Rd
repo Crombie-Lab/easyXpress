@@ -4,7 +4,7 @@
 \alias{plateThumbs}
 \title{plateThumbs}
 \usage{
-plateThumbs(project_dir, plates = "all")
+plateThumbs(project_dir, plates = "all", file_ext = ".TIF")
 }
 \arguments{
 \item{project_dir}{The full path to the project directory. It must contain
@@ -15,8 +15,11 @@ folder and .png thumbnails from raw .TIFs.}
 \item{plates}{a vector with plate numbers to make thumbs for. This vector is
 used to match plate patterns in the filelist.\cr \code{"all"} will make
 thumbs for all plates.\cr \code{13:72} will make thumbs for wells plates
-p13 - p72.\cr \code{c(1, 3, 106)} will make thumbs for plates p01, p03, and
+p013 - p072.\cr \code{c(1, 3, 106)} will make thumbs for plates p001, p003, and
 p106.}
+
+\item{file_ext}{the file extension of your raw images. The default is \code{".TIF"},
+this argument is case sensitive. This means .tif files will not be found by default.}
 }
 \value{
 A folder named raw_plate_thumbs under the project directory

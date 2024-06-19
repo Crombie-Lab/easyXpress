@@ -1,6 +1,6 @@
 #' wellThumbs
 #'
-#' Make .png thumbnails from .TIF files in the raw_images directory. Making
+#' Make .png thumbnails from the files in the raw_images directory. Making
 #' thumbs from .TIFs requires \href{https://imagemagick.org/}{ImageMagick} to be
 #' installed on your system. To install imagemagick with Homebrew, enter:\cr
 #' \code{brew install imagemagick}\cr into the terminal.
@@ -10,11 +10,13 @@
 #' @param plates a vector with plate numbers to make thumbs for. This vector is
 #'   used to match plate patterns in the filelist.\cr \code{"all"} will make
 #'   thumbs for wells in all plates.\cr \code{13:72} will make thumbs for wells
-#'   in plates p13 - p72.\cr \code{c(1, 3, 106)} will make thumbs for wells in
-#'   plates p01, p03, and p106.
+#'   in plates p013 - p072.\cr \code{c(1, 3, 106)} will make thumbs for wells in
+#'   plates p001, p003, and p106.
 #' @param max_dim The maximum dimension of the resized images in pixels. The
 #'   default value is 512, which scales a 2048 pixel image to 6.25 percent of its
 #'   original resolution.
+#' @param file_ext the file extension of your raw images. The default is \code{".TIF"},
+#'    this argument is case sensitive. This means .tif files will not be found by default.
 #' @return A folder named raw_image_thumbs under the directory specified by
 #'   \code{project_dir}.
 #' @importFrom imager load.image resize save.image
@@ -22,14 +24,14 @@
 #' @export
 #'
 
-wellThumbs <- function(project_dir, plates = "all", max_dim = 512) {
+wellThumbs <- function(project_dir, plates = "all", max_dim = 512, file_ext = ".TIF") {
 
   # get full file list of raw .TIF files from raw images directory
-  file_list <- list.files(path = glue::glue("{project_dir}/raw_images"), pattern = "*.TIF", full.names = FALSE)
+  file_list <- list.files(path = glue::glue("{project_dir}/raw_images"), pattern = glue::glue("*{file_ext}"), full.names = FALSE)
 
   # return if file list is empty
   if(length(file_list) == 0) {
-    warning("wellThumbs() could not find any .TIF files")
+    warning(glue::glue("wellThumbs() could not find any {file_ext} files"))
   }
   else {
   # make raw_image_thumbs directory if needed
@@ -56,11 +58,11 @@ wellThumbs <- function(project_dir, plates = "all", max_dim = 512) {
     raw_max_dim <- max(dim(img))
     percentage <- 100*(max_dim/raw_max_dim)
 
-    # resize to make thumbnail
-    thumb <- imager::resize(img, -percentage, -percentage) # need negative for resize function
+    # resize to make thumbnail and set slice and channel values to 1
+    thumb <- imager::resize(img, -percentage, -percentage, 1, 1) # need negative for resize function
 
     # edit the file name for saving
-    save_thumb_name <- stringr::str_replace(i, pattern = ".TIF", replacement = "_thumbnail.png")
+    save_thumb_name <- stringr::str_replace(i, pattern = glue::glue("{file_ext}"), replacement = "_thumbnail.png")
     save_thumb_path <- glue::glue("{project_dir}/raw_image_thumbs/{save_thumb_name}")
 
     # Make message

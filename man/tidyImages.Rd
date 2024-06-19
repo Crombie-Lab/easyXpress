@@ -4,23 +4,37 @@
 \alias{tidyImages}
 \title{tidyImages}
 \usage{
-tidyImages(project_dir, rm_other = FALSE)
+tidyImages(
+  project_dir,
+  rm_other = FALSE,
+  file_ext = ".TIF",
+  profile = "moldev"
+)
 }
 \arguments{
 \item{project_dir}{the full path to the project directory. This folder should
-contain .TIF images exported from the imaging platform.}
+contain images exported from the imaging platform.}
 
-\item{rm_other}{logical, remove non-TIF files and folders after the .TIF
-files are moved to raw_images subfolder? Default is \code{FALSE}. Set to
-\code{TRUE} if you are certain you want to remove non-TIF files and folders
-in the \code{project_dir} after .TIFs are moved.}
+\item{rm_other}{logical, remove unwanted files and folders after the files
+matching the \code{file_ext} are moved to raw_images subfolder? Default is
+\code{FALSE}. Set to \code{TRUE} if you are certain you want to remove other
+files and folders in the \code{project_dir} after the files matching \code{file_ext}
+are moved.}
+
+\item{file_ext}{the file extension of your raw images. The default is \code{".TIF"},
+this argument is case sensitive. This means .tif files will not be found by default.}
+
+\item{profile}{the profile is matched to the imager. Currently there are two
+supported imagers, "moldev" for the Molecular Devices ImageXpress Nano microscope and
+"keyence" for the Keyence BZ-X800 microscope. The default is \code{"moldev"}.}
 }
 \value{
 A folder named raw_images under the directory specified with
-  \code{project_dir}, which contains all .TIF image files for the project.
+   \code{project_dir}, which contains all image files matching \code{file_ext}
+   for the project.
 }
 \description{
-Organize .TIF files exported from an imager platform by creating a raw_images
-subdirectory in the project directory, moving all .TIF files into it, and
-removing non-TIF files and folders if desired.
+Organize image files exported from an imager platform by creating a raw_images
+subdirectory in the project directory, moving all image files into it, and
+removing unwanted files and folders if desired.
 }
