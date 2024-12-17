@@ -16,7 +16,7 @@
 viewWell <- function(df, img_dir, plate, well, boxplot = TRUE) {
   #list all images in directory
   list_all_imgs <- list.files(img_dir)
-  #dataframe of pathnames of images in directory
+  #dataframe of pathnames of images in directory from an image directory
   df_all_imgs <- tibble::as_tibble(list.files(img_dir, full.names = TRUE)) %>%
     dplyr::rename(path = value) %>%
     dplyr::mutate(file_name = list_all_imgs) %>%
@@ -29,6 +29,8 @@ viewWell <- function(df, img_dir, plate, well, boxplot = TRUE) {
   h<-dim(img)[1] # image height
   w<-dim(img)[2] # image width
 
+  # test if well_edge_flag or edge_ObjectFlag present
+  if("well_edge_flag" %in% names(df) & "well_outlier_flag" %in% names(df)){
   #add object type labels to dataframe
   well_data <- df %>%
     dplyr::filter(Metadata_Plate %in% c(plate),
@@ -52,7 +54,45 @@ viewWell <- function(df, img_dir, plate, well, boxplot = TRUE) {
       cluster_flag == F & well_edge_flag == F & well_outlier_flag == F & model == levels(model)[2] ~ as.character(glue::glue("{levels(model)[2]}_model")),
       cluster_flag == F & well_edge_flag == F & well_outlier_flag == F & model == levels(model)[3] ~ as.character(glue::glue("{levels(model)[3]}_model")),
       cluster_flag == F & well_edge_flag == F & well_outlier_flag == F & model == levels(model)[4] ~ as.character(glue::glue("{levels(model)[4]}_model"))))
+  }
 
+  if("edge_ObjectFlag" %in% names(df) & !("outlier_ObjectFlag" %in% names(df))){
+    well_data <- df %>%
+      dplyr::filter(Metadata_Plate %in% c(!!plate),
+                    Metadata_Well %in% c(!!well)) %>% # need to unquote arguments if plate and well in dataset? Use bang bang !!
+      dplyr::mutate(object_type = dplyr::case_when(
+        cluster_flag == T & edge_ObjectFlag == "edge"  ~ "cluster/edge_flag",
+        cluster_flag == T & is.na(edge_ObjectFlag)  ~ "cluster_flag",
+        cluster_flag == F & edge_ObjectFlag == "edge"  ~ "edge_flag",
+        cluster_flag == F & is.na(edge_ObjectFlag) & model == levels(model)[1] ~ as.character(glue::glue("{levels(model)[1]}_model")),
+        cluster_flag == F & is.na(edge_ObjectFlag) & model == levels(model)[2] ~ as.character(glue::glue("{levels(model)[2]}_model")),
+        cluster_flag == F & is.na(edge_ObjectFlag) & model == levels(model)[3] ~ as.character(glue::glue("{levels(model)[3]}_model")),
+        cluster_flag == F & is.na(edge_ObjectFlag) & model == levels(model)[4] ~ as.character(glue::glue("{levels(model)[4]}_model"))))
+  }
+  if("edge_ObjectFlag" %in% names(df) & "outlier_ObjectFlag" %in% names(df)){
+    well_data <- df %>%
+      dplyr::filter(Metadata_Plate %in% c(plate),
+                    Metadata_Well %in% c(well)) %>%
+      dplyr::mutate(object_type = dplyr::case_when(
+        cluster_flag == T & edge_ObjectFlag == T & outlier_ObjectFlag == T ~ "all_flags",
+        cluster_flag == T & edge_ObjectFlag == T & outlier_ObjectFlag == F ~ "cluster/edge_flag",
+        cluster_flag == T & edge_ObjectFlag == F & outlier_ObjectFlag == T ~ "cluster/outlier_flag",
+        cluster_flag == T & edge_ObjectFlag == F & outlier_ObjectFlag == F ~ "cluster_flag",
+        cluster_flag == F & edge_ObjectFlag == T & outlier_ObjectFlag == T ~ "edge/outlier_flag",
+        cluster_flag == F & edge_ObjectFlag == T & outlier_ObjectFlag == F ~ "edge_flag",
+        cluster_flag == F & edge_ObjectFlag == F & outlier_ObjectFlag == T ~ "outlier_flag",
+        cluster_flag == T & edge_ObjectFlag == T & is.na(outlier_ObjectFlag) ~ "cluster/edge_flag",
+        cluster_flag == T & edge_ObjectFlag == F & is.na(outlier_ObjectFlag) ~ "cluster_flag",
+        cluster_flag == F & edge_ObjectFlag == T & is.na(outlier_ObjectFlag) ~ "edge_flag",
+        cluster_flag == F & edge_ObjectFlag == F & is.na(outlier_ObjectFlag) & model == levels(model)[1] ~ as.character(glue::glue("{levels(model)[1]}_model")),
+        cluster_flag == F & edge_ObjectFlag == F & is.na(outlier_ObjectFlag) & model == levels(model)[2] ~ as.character(glue::glue("{levels(model)[2]}_model")),
+        cluster_flag == F & edge_ObjectFlag == F & is.na(outlier_ObjectFlag) & model == levels(model)[3] ~ as.character(glue::glue("{levels(model)[3]}_model")),
+        cluster_flag == F & edge_ObjectFlag == F & is.na(outlier_ObjectFlag) & model == levels(model)[4] ~ as.character(glue::glue("{levels(model)[4]}_model")),
+        cluster_flag == F & edge_ObjectFlag == F & outlier_ObjectFlag == F & model == levels(model)[1] ~ as.character(glue::glue("{levels(model)[1]}_model")),
+        cluster_flag == F & edge_ObjectFlag == F & outlier_ObjectFlag == F & model == levels(model)[2] ~ as.character(glue::glue("{levels(model)[2]}_model")),
+        cluster_flag == F & edge_ObjectFlag == F & outlier_ObjectFlag == F & model == levels(model)[3] ~ as.character(glue::glue("{levels(model)[3]}_model")),
+        cluster_flag == F & edge_ObjectFlag == F & outlier_ObjectFlag == F & model == levels(model)[4] ~ as.character(glue::glue("{levels(model)[4]}_model"))))
+  }
   #determine well radius used
   well_radius <- df %>%
     dplyr::ungroup() %>%
@@ -85,7 +125,7 @@ viewWell <- function(df, img_dir, plate, well, boxplot = TRUE) {
       ggplot2::geom_jitter(shape = 21, width = 0.25, size = 3, aes(x = Metadata_Well, y = worm_length_um, fill = object_type)) +
       ggplot2::labs(x ="") +
       ggplot2::theme_bw() +
-      ggplot2::guides(fill = F)
+      ggplot2::guides(fill = "none")
 
     all_plots <- cowplot::plot_grid(well_img, well_boxplot, nrow = 1, rel_widths = c(1,0.25), align = "hv", axis = "tb")
 

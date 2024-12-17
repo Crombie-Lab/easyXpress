@@ -36,6 +36,7 @@ wellThumbs <- function(project_dir, plates = "all", max_dim = 512, file_ext = ".
   else {
   # make raw_image_thumbs directory if needed
   fs::dir_create(glue::glue("{project_dir}/raw_image_thumbs"))
+  }
 
   if(!("all" %in% plates)) {
     # convert plate sequence to proper format
@@ -72,5 +73,4 @@ wellThumbs <- function(project_dir, plates = "all", max_dim = 512, file_ext = ".
     imager::save.image(thumb, file = save_thumb_path)
   }
   message("wellThumbs Done")
-  }
 }

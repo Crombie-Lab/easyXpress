@@ -41,7 +41,9 @@ Imports:
     gridExtra,
     dplyr,
     ggplot2,
-    pals
+    pals,
+    gbm,
+    recipes
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

@@ -127,6 +127,8 @@ viewOverlay <- function(data, proc.img.dir, well.label, obj.label,
   h<-dim(img)[1] # image height
   w<-dim(img)[2] # image width
 
+  aspect_ratio <- w/h
+
   # Make gtable with layout
   img_grid <- do.call("arrangeGrob", c(img_grob_list, ncol=ncol, nrow=nrow))
 
@@ -139,8 +141,11 @@ viewOverlay <- function(data, proc.img.dir, well.label, obj.label,
   # Get plot df for adding points
   plot_data_df <- plot_data_rename %>%
     dplyr::left_join(array_pos_df, by = "Image_FileName_RawBF") %>%
+    #dplyr::mutate(obj_center_x = abs(AreaShape_Center_X) * (1/w) + array_x_pos,
+    #              obj_center_y = abs(AreaShape_Center_Y - h) * (1/h) + array_y_pos) # w = img width, h = img height
     dplyr::mutate(obj_center_x = abs(AreaShape_Center_X) * (1/w) + array_x_pos,
-                  obj_center_y = abs(AreaShape_Center_Y - h) * (1/h) + array_y_pos) # w = img width, h = img height
+                  obj_center_y = abs(AreaShape_Center_Y - h) * (1/(h*aspect_ratio)) + ((abs(h-w)/2)/(h*aspect_ratio)) + array_y_pos) # w = img width, h = img height - NEED TO EDIT for non-square images?
+
 
   # Generate plot message
   message(glue::glue("Making plot for {n} overlays"))
@@ -231,7 +236,7 @@ viewOverlay <- function(data, proc.img.dir, well.label, obj.label,
     return(p)
   } else {
   message(glue::glue("Saving plot as: {file}"))
-  ggplot2::ggsave(file = file, plot = p, width = ncol, height = nrow + 0.25, dpi = 2048)
+  ggplot2::ggsave(file = file, plot = p, width = ncol, height = nrow + 0.25, dpi = 2048) # NEED TO IMAGE for non-square images?
   return(p)
   }
 }

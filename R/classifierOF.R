@@ -49,6 +49,7 @@ classifierOF <- function(data, model = "gbm2x", thresh = 0.6){
     }
 
     # use it
+    #gbm2x_prob <- caret::predict(gbm2x, newdata = f.data, type = "prob")
     gbm2x_prob <- stats::predict(gbm2x, newdata = f.data, type = "prob")
     gbm2x_class <- stats::predict(gbm2x, newdata = f.data)
 
@@ -74,7 +75,7 @@ classifierOF <- function(data, model = "gbm2x", thresh = 0.6){
         dplyr::filter(classifier_ObjectFlag == "ERROR")
     }
   } else {
-    stop(glue::glue('Only the gbm2x classifer model is currently supported. Please set the argement model = "gbm2X"'))
+    stop(glue::glue('Only the gbm2x classifer model is currently supported. Please set the argument model = "gbm2X"'))
   }
   # retun it
   return(classifier_df)
