@@ -8,7 +8,7 @@ This package is designed for reading, processing, and visualizing of nematode mo
 
 ```r
 install.packages("devtools")
-devtools::install_github("AndersenLab/easyXpress")
+devtools::install_github("Crombie-Lab/easyXpress")
 ```
 OS X installations of `easyXpress` require `XQuartz` to be installed. Follow the instructions [here to install XQuartz](https://www.xquartz.org/).
 
